@@ -9,6 +9,38 @@ The Read Me First Chain presentation contract, served to Claude over MCP.
 
 Also exposed: the prompt `read-me-first-chain` and the resources `scaffold://system-directive` and `scaffold://contract`.
 
+## Explicit requests and heading profiles
+
+The original no-argument call and four H4 headings remain the default (`profile="v1"`).
+A populated request envelope is also supported and acknowledged in the result:
+
+```json
+{"args":{"query":"'://read-me'"},"profile":"v2"}
+```
+
+`args.query` must be a nonblank string. It records the caller's request; it does not
+perform a search or execute the query. Invalid envelopes produce an MCP input error.
+
+For an explicitly selected v2 hierarchy, pass `profile="v2"` to **all three tools**.
+The headers are `# Presence`, `## Context`, `### Capabilities`, `#### Current Field`.
+Validation examines the complete response and rejects mixed profiles, missing,
+reordered, or repeated fields. It never silently changes the selected profile.
+The canonical v1 directive, skill, and validator remain unchanged; v2 is an explicit
+compatibility profile layered over the original validator.
+
+All tools declare read-only, non-destructive, idempotent, closed-world annotations.
+Their functions do not write payloads to disk or make outbound requests. These
+annotations describe implementation behavior; they do not grant authorization or
+override a client's approval policy. Remote calls still send their input to the
+deployed service. Hosting/proxy logging is outside this source-level guarantee.
+
+`get_contract` reports `implementation_version="1.1.0"`, the selected profile, and
+the unchanged directive hash so callers can distinguish this release from an old
+deployment. Redeploy the service and refresh the client's tool schema before using
+the new arguments. A source commit alone does not update an existing connector.
+
+Run regression and MCP boundary tests with `python -m unittest discover -s tests -v`.
+
 ## Files
 - `server.py` — the MCP server
 - `validate_scaffold_response.py` — the skill's validator, unmodified
