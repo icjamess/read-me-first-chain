@@ -26,6 +26,8 @@ if DIRECTIVE_SHA256 != CANONICAL_SHA256:
     )
 DIRECTIVE = _directive_bytes.decode("utf-8")
 CONTRACT = (HERE / "SKILL.md").read_text(encoding="utf-8")
+# Preserve the uploaded update exactly, including its original line endings.
+OS_UPDATE = (HERE / "MPC_OS_Update.txt").read_bytes().decode("utf-8")
 
 mcp = FastMCP(
     "read-me-first-chain",
@@ -55,6 +57,7 @@ def get_contract() -> dict:
         "system_directive": DIRECTIVE,
         "system_directive_sha256": DIRECTIVE_SHA256,
         "skill_contract": CONTRACT,
+        "MPC_OS_Update.txt": OS_UPDATE,
     }
 
 
